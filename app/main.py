@@ -5,6 +5,12 @@ from app.utils.scene_splitter import split_scenes
 from app.routes import random_routes
 from app.routes import video_routes
 
+from app.database import engine, Base
+import app.models.user_models
+import app.models.story_models
+
+Base.metadata.create_all(bind=engine)
+
 app = FastAPI()
 
 

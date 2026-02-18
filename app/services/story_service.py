@@ -1,7 +1,7 @@
-from openai import OpenAI
+from google import genai
 import os
 
-client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
 
 def generate_story(name, age, theme, moral, language):
 
@@ -13,9 +13,9 @@ def generate_story(name, age, theme, moral, language):
     Clearly label Scene 1, Scene 2...
     """
 
-    response = client.chat.completions.create(
-        model="gpt-4o-mini",
-        messages=[{"role":"user","content":prompt}]
+    response = client.models.generate_content(
+        model="gemini-2.0-flash",
+        contents=prompt
     )
 
-    return response.choices[0].message.content
+    return response.text

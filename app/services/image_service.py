@@ -1,21 +1,18 @@
-from openai import OpenAI
+from google import genai
+from google.genai import types
 import os
-
-client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+import uuid
 
 def generate_pixel_image(scene_text, photo_url=None):
 
     if photo_url:
         prompt = f"""
         Ultra detailed Pixar-style 3D animated movie still,
-        Unreal Engine 5 rendering,
         soft global illumination,
         depth of field,
         cinematic camera angle,
         consistent character design,
-        The main character closely resembles the child in this reference image: {photo_url},
-        maintain same facial features in every scene,
-        same hairstyle and expressions,
+        The main character closely resembles a child,
         child-friendly,
         bright vibrant color grading,
         Scene: {scene_text}
@@ -23,7 +20,6 @@ def generate_pixel_image(scene_text, photo_url=None):
     else:
         prompt = f"""
         Ultra detailed Pixar-style 3D animated movie still,
-        Unreal Engine 5 rendering,
         soft global illumination,
         depth of field,
         cinematic camera angle,
@@ -33,10 +29,19 @@ def generate_pixel_image(scene_text, photo_url=None):
         Scene: {scene_text}
         """
 
-    result = client.images.generate(
-        model="dall-e-3",
+    client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
+    response = client.models.generate_images(
+        model="imagen-3.0-generate-002",
         prompt=prompt,
-        size="1024x1024"
+        config=types.GenerateImagesConfig(number_of_images=1)
     )
 
-    return result.data[0].url
+    # Save image locally and return path
+    os.makedirs("generated_images", exist_ok=True)
+    filename = f"generated_images/{uuid.uuid4().hex}.png"
+
+    for image in response.generated_images:
+        with open(filename, "wb") as f:
+            f.write(image.image.image_bytes)
+
+    return filename

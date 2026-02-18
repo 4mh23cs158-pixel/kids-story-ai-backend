@@ -1,16 +1,10 @@
-from openai import OpenAI
+from gtts import gTTS
 import os
 
-client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
-
 def generate_audio(text):
-    response = client.audio.speech.create(
-        model="tts-1",
-        voice="alloy",
-        input=text
-    )
+    tts = gTTS(text=text, lang="en")
+    
+    audio_path = "narration.mp3"
+    tts.save(audio_path)
 
-    with open("narration.mp3", "wb") as f:
-        f.write(response.content)
-
-    return "narration.mp3"
+    return audio_path
