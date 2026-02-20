@@ -4,6 +4,8 @@ from pydantic import BaseModel
 from typing import List, Optional
 from app.services.story_service import generate_story, split_story_into_scenes, extract_scenes
 from app.services.image_service import generate_pixel_image, generate_image, generate_image_from_scene
+from app.middleware.auth_dependency import verify_token
+
 
 router = APIRouter()
 
